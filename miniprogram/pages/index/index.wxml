@@ -1,6 +1,6 @@
 <!-- 顶部头像 + 引言 -->
 <view class="banner">
-  <image class="avatar" src="{{woolfImgUrl}}"></image>
+  <image class="avatar" src="{{woolfImgUrl}}" style="width: 89rpx; display: block; box-sizing: border-box"></image>
   <text class="quote">"一间自己的房间"</text>
 </view>
 
@@ -31,9 +31,9 @@
   <text class="plus">+</text>
 </view>
 <view wx:if="{{menuOpen}}" class="fab-menu">
-  <view bindtap="gotoCheckin">📅 打卡</view>
+  <view bindtap="gotoCheckin">🦉 打卡</view>
   <view bindtap="gotoNote">📝 笔记</view>
-  <view bindtap="gotoLeave">🙋 请假</view>
+  <view bindtap="gotoLeave">🌴 请假</view>
 </view>
 
 <!-- 打卡弹窗 -->
@@ -64,6 +64,10 @@
             </view>
           </view>
         </view>
+        <view class="note-form-item">
+          <text class="label">读书笔记：</text>
+          <textarea class="note-input" placeholder="写下你的读书心得吧~" maxlength="500" value="{{checkinNote}}" bindinput="onCheckinNoteInput"></textarea>
+        </view>
         <view class="checkin-info" wx:if="{{continuousDays > 0}}">
           连续打卡 {{continuousDays}} 天
         </view>
@@ -71,18 +75,6 @@
     </block>
     <block wx:else>
       <view class="leave-form">
-        <view class="form-item">
-          <text class="label">开始日期：</text>
-          <picker mode="date" value="{{leaveStartDate}}" start="{{today}}" bindchange="onStartDateChange">
-            <view class="picker">{{leaveStartDate}}</view>
-          </picker>
-        </view>
-        <view class="form-item">
-          <text class="label">结束日期：</text>
-          <picker mode="date" value="{{leaveEndDate}}" start="{{leaveStartDate}}" bindchange="onEndDateChange">
-            <view class="picker">{{leaveEndDate}}</view>
-          </picker>
-        </view>
         <view class="form-item">
           <text class="label">请假原因：</text>
           <textarea placeholder="请输入请假原因" bindinput="onLeaveReasonInput" value="{{leaveReason}}" class="reason-input"></textarea>

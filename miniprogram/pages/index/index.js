@@ -7,11 +7,9 @@ Page({
     isLeave: false,
     selectedDate: '',
     leaveReason: '',
-    leaveStartDate: '',
-    leaveEndDate: '',
-    today: '',
     checkinImage: '',
-    woolfImgUrl: 'cloud://cloud1-6gp93nl152185a11.636c-cloud1-6gp93nl152185a11-1358950116/my-photo.png'
+    woolfImgUrl: 'cloud://cloud1-6gp93nl152185a11.636c-cloud1-6gp93nl152185a11-1358950116/my-photo.png',
+    checkinNote: ''
   },
 
   onLoad() {
@@ -38,7 +36,6 @@ Page({
     
     // 填充当月日期
     for (let i = 1; i <= lastDay.getDate(); i++) {
-      const date = new Date(year, month, i)
       const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`
       days.push({
         day: i,
@@ -52,10 +49,7 @@ Page({
     const today = `${year}-${String(month + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
     this.setData({ 
       days,
-      selectedDate: today,
-      today: today,
-      leaveStartDate: today,
-      leaveEndDate: today
+      selectedDate: today
     })
     this.loadCheckinData()
   },
@@ -124,9 +118,8 @@ Page({
       showCheckinPopup: false,
       isLeave: false,
       leaveReason: '',
-      leaveStartDate: this.data.today,
-      leaveEndDate: this.data.today,
-      checkinImage: ''
+      checkinImage: '',
+      checkinNote: ''
     })
   },
 
@@ -142,14 +135,14 @@ Page({
   },
 
   gotoLeave() {
-    const today = this.data.today
+    const now = new Date()
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
     this.setData({
       menuOpen: false,
       showCheckinPopup: true,
       isLeave: true,
       selectedDate: today,
-      leaveStartDate: today,
-      leaveEndDate: today
+      leaveReason: ''
     })
   },
 
@@ -177,20 +170,6 @@ Page({
   onLeaveReasonInput(e) {
     this.setData({
       leaveReason: e.detail.value
-    })
-  },
-
-  onStartDateChange(e) {
-    const startDate = e.detail.value
-    this.setData({
-      leaveStartDate: startDate,
-      leaveEndDate: this.data.leaveEndDate < startDate ? startDate : this.data.leaveEndDate
-    })
-  },
-
-  onEndDateChange(e) {
-    this.setData({
-      leaveEndDate: e.detail.value
     })
   },
 
@@ -234,7 +213,7 @@ Page({
   },
 
   confirmCheckin() {
-    const { selectedDate, isLeave, leaveReason, leaveStartDate, leaveEndDate, checkinImage } = this.data
+    const { selectedDate, isLeave, leaveReason, checkinImage, checkinNote } = this.data
     
     if (isLeave) {
       if (!leaveReason.trim()) {
@@ -244,41 +223,32 @@ Page({
         })
         return
       }
-
-      if (leaveEndDate < leaveStartDate) {
-        wx.showToast({
-          title: '结束日期不能早于开始日期',
-          icon: 'none'
-        })
-        return
-      }
-      
       // 保存请假数据
       const leaveData = wx.getStorageSync('leaveData') || {}
-      const start = new Date(leaveStartDate)
-      const end = new Date(leaveEndDate)
-      
-      // 为日期范围内的每一天添加请假记录
-      for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
-        const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-        leaveData[dateStr] = {
-          reason: leaveReason,
-          timestamp: new Date().getTime(),
-          startDate: leaveStartDate,
-          endDate: leaveEndDate
-        }
+      leaveData[selectedDate] = {
+        reason: leaveReason,
+        timestamp: new Date().getTime()
       }
       wx.setStorageSync('leaveData', leaveData)
-      
-      // 清除日期范围内的打卡记录
+      // 如果之前是打卡状态，清除打卡记录
       const checkinData = wx.getStorageSync('checkinData') || {}
-      for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
-        const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-        if (checkinData[dateStr]) {
-          delete checkinData[dateStr]
-        }
+      if (checkinData[selectedDate]) {
+        delete checkinData[selectedDate]
+        wx.setStorageSync('checkinData', checkinData)
       }
-      wx.setStorageSync('checkinData', checkinData)
+      // 更新日历显示
+      this.loadCheckinData()
+      // 关闭弹窗
+      this.setData({
+        showCheckinPopup: false,
+        isLeave: false,
+        leaveReason: ''
+      })
+      wx.showToast({
+        title: '请假申请已提交',
+        icon: 'success'
+      })
+      return
     } else {
       if (!checkinImage) {
         wx.showToast({
@@ -323,8 +293,6 @@ Page({
             showCheckinPopup: false,
             isLeave: false,
             leaveReason: '',
-            leaveStartDate: this.data.today,
-            leaveEndDate: this.data.today,
             checkinImage: ''
           })
           

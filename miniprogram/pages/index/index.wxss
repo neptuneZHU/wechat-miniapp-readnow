@@ -1,0 +1,418 @@
+/* 整体页面 */
+page {
+  background-color: #fffaf3;
+  font-family: "PingFang SC", sans-serif;
+}
+
+/* 顶部作者信息区域 */
+.banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40rpx;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  margin-bottom: 20rpx;
+  background-color: #f4e3d7;
+}
+
+.quote {
+  font-size: 26rpx;
+  color: #7a5e4f;
+  font-style: italic;
+}
+
+/* 日历区域 */
+.calendar {
+  background-color: #fff8ed;
+  margin: 40rpx;
+  padding: 30rpx 20rpx;
+  border-radius: 32rpx;
+  box-shadow: 0 10rpx 20rpx rgba(0, 0, 0, 0.05);
+}
+
+.weekdays {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10rpx 20rpx;
+  border-bottom: 2rpx solid #f1e6db;
+}
+
+.weekday {
+  width: 14.28%;  /* 100% / 7 天 */
+  text-align: center;
+  font-size: 24rpx;
+  color: #7a5e4f;
+  font-weight: 500;
+}
+
+.days {
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 20rpx;
+}
+
+.day {
+  width: 14.28%;  /* 100% / 7 天 */
+  height: 80rpx;  /* 固定高度确保对齐 */
+  text-align: center;
+  padding: 10rpx 0;
+  margin-bottom: 20rpx;
+  position: relative;
+  font-size: 28rpx;
+  color: #555;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.day.empty {
+  visibility: hidden;
+}
+
+.day.marked {
+  color: #000;
+  font-weight: bold;
+}
+
+.day text:first-child {
+  position: relative;
+  z-index: 1;
+}
+
+.day .reading-indicator {
+  position: absolute;
+  font-size: 40rpx;  /* 更大的图标 */
+  color: rgba(255, 192, 120, 0.6);  /* 降低饱和度的橙色 */
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  z-index: 0;
+}
+
+.day .leave-indicator {
+  position: absolute;
+  font-size: 40rpx;  /* 更大的图标 */
+  color: rgba(153, 153, 153, 0.6);  /* 降低饱和度的灰色 */
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  z-index: 0;
+}
+
+/* 浮动按钮与菜单 */
+.fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 80rpx;
+  width: 100rpx;
+  height: 100rpx;
+  background-color: #ffc078;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 100rpx;
+  font-size: 48rpx;
+  color: white;
+  box-shadow: 0 6rpx 10rpx rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+  z-index: 100;
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+.fab-menu {
+  position: fixed;
+  right: 40rpx;
+  bottom: 200rpx;
+  width: 220rpx;
+  background-color: #fffdf7;
+  border-radius: 20rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.15);
+  padding: 20rpx 0;
+  z-index: 100;
+  animation: slideUp 0.3s ease;
+  transform-origin: bottom right;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.fab-menu view {
+  padding: 20rpx 30rpx;
+  font-size: 28rpx;
+  color: #7a5e4f;
+  border-bottom: 1rpx solid #f1e6db;
+  transition: background-color 0.2s ease;
+}
+
+.fab-menu view:active {
+  background-color: #fff8ed;
+}
+
+.fab-menu view:last-child {
+  border-bottom: none;
+}
+
+/* 打卡弹窗 */
+.popup-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.checkin-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fffdf7;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  width: 80%;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.checkin-popup .title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #7a5e4f;
+  text-align: center;
+  margin-bottom: 30rpx;
+}
+
+.checkin-popup .content {
+  font-size: 28rpx;
+  color: #666;
+  text-align: center;
+  margin-bottom: 40rpx;
+  background-color: #fff8ed;
+  padding: 30rpx;
+  border-radius: 16rpx;
+}
+
+.checkin-popup .date-selector {
+  margin-bottom: 30rpx;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx;
+}
+
+.checkin-popup .date-selector text {
+  font-size: 28rpx;
+  color: #7a5e4f;
+  padding: 10rpx 20rpx;
+}
+
+.checkin-popup .date-selector .arrow {
+  color: #ffc078;
+  font-size: 32rpx;
+  cursor: pointer;
+}
+
+.checkin-popup .date-selector .date {
+  font-weight: bold;
+  color: #ffc078;
+  background-color: #fff8ed;
+  padding: 10rpx 30rpx;
+  border-radius: 30rpx;
+}
+
+.checkin-popup .buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.checkin-popup .btn {
+  flex: 1;
+  padding: 20rpx 0;
+  text-align: center;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  transition: all 0.2s ease;
+}
+
+.checkin-popup .btn:active {
+  transform: scale(0.98);
+}
+
+.checkin-popup .btn-primary {
+  background-color: #ffc078;
+  color: white;
+}
+
+.checkin-popup .btn-secondary {
+  background-color: #f1e6db;
+  color: #7a5e4f;
+}
+
+.leave-form {
+  text-align: left;
+}
+
+.form-item {
+  margin-bottom: 24rpx;
+}
+
+.form-item:last-child {
+  margin-bottom: 0;
+}
+
+.form-item .label {
+  display: block;
+  color: #7a5e4f;
+  margin-bottom: 12rpx;
+  font-weight: 500;
+}
+
+.form-item .picker {
+  background-color: white;
+  padding: 16rpx 24rpx;
+  border-radius: 12rpx;
+  border: 2rpx solid #f1e6db;
+  color: #333;
+}
+
+.reason-input {
+  width: 100%;
+  height: 120rpx;
+  padding: 20rpx;
+  box-sizing: border-box;
+  border: 2rpx solid #f1e6db;
+  border-radius: 12rpx;
+  background-color: white;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.checkin-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.image-upload {
+  width: 100%;
+  margin-bottom: 20rpx;
+}
+
+.upload-preview {
+  position: relative;
+  width: 100%;
+  height: 400rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  background-color: #f8f8f8;
+}
+
+.upload-preview image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  width: 60rpx;
+  height: 60rpx;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  line-height: 1;
+}
+
+.upload-buttons {
+  display: flex;
+  justify-content: space-around;
+  gap: 20rpx;
+  padding: 20rpx 0;
+}
+
+.upload-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+  padding: 30rpx;
+  background-color: white;
+  border-radius: 16rpx;
+  border: 2rpx solid #f1e6db;
+  transition: all 0.2s ease;
+}
+
+.upload-btn:active {
+  transform: scale(0.98);
+  background-color: #fff8ed;
+}
+
+.upload-btn .icon {
+  font-size: 48rpx;
+}
+
+.upload-btn text:last-child {
+  font-size: 28rpx;
+  color: #7a5e4f;
+}
+
+.checkin-info {
+  font-size: 28rpx;
+  color: #7a5e4f;
+  text-align: center;
+  padding: 20rpx;
+  background-color: white;
+  border-radius: 12rpx;
+  border: 2rpx solid #f1e6db;
+}

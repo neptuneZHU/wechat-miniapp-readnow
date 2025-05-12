@@ -1,0 +1,97 @@
+<!-- 顶部头像 + 引言 -->
+<view class="banner">
+  <image class="avatar" src="{{woolfImgUrl}}"></image>
+  <text class="quote">"一间自己的房间"</text>
+</view>
+
+<!-- 日历区域 -->
+<view class="calendar">
+  <view class="weekdays">
+    <view class="weekday">日</view>
+    <view class="weekday">一</view>
+    <view class="weekday">二</view>
+    <view class="weekday">三</view>
+    <view class="weekday">四</view>
+    <view class="weekday">五</view>
+    <view class="weekday">六</view>
+  </view>
+  <view class="days">
+    <block wx:for="{{days}}" wx:key="index">
+      <view class="day {{item.empty ? 'empty' : ''}} {{item.marked ? 'marked' : ''}}" bindtap="markDay" data-index="{{index}}">
+        <text>{{item.day}}</text>
+        <text wx:if="{{item.read}}" class="reading-indicator">📚</text>
+        <text wx:if="{{item.leave}}" class="leave-indicator">🏖️</text>
+      </view>
+    </block>
+  </view>
+</view>
+
+<!-- 浮动按钮 + 展开菜单 -->
+<view class="fab" bindtap="toggleMenu">
+  <text class="plus">+</text>
+</view>
+<view wx:if="{{menuOpen}}" class="fab-menu">
+  <view bindtap="gotoCheckin">📅 打卡</view>
+  <view bindtap="gotoNote">📝 笔记</view>
+  <view bindtap="gotoLeave">🙋 请假</view>
+</view>
+
+<!-- 打卡弹窗 -->
+<view class="popup-mask" wx:if="{{showCheckinPopup}}" bindtap="closeCheckinPopup"></view>
+<view class="checkin-popup" wx:if="{{showCheckinPopup}}">
+  <view class="title">{{isLeave ? '请假申请' : '打卡'}}</view>
+  <view class="date-selector">
+    <text bindtap="selectPrevDay" class="arrow">◀</text>
+    <text class="date">{{selectedDate}}</text>
+    <text bindtap="selectNextDay" class="arrow">▶</text>
+  </view>
+  <view class="content">
+    <block wx:if="{{!isLeave}}">
+      <view class="checkin-form">
+        <view class="image-upload">
+          <view class="upload-preview" wx:if="{{checkinImage}}">
+            <image src="{{checkinImage}}" mode="aspectFill" bindtap="previewImage"></image>
+            <view class="delete-btn" bindtap="deleteImage">×</view>
+          </view>
+          <view class="upload-buttons" wx:else>
+            <view class="upload-btn" bindtap="chooseImage">
+              <text class="icon">📷</text>
+              <text>拍照</text>
+            </view>
+            <view class="upload-btn" bindtap="chooseImageFromAlbum">
+              <text class="icon">🖼️</text>
+              <text>相册</text>
+            </view>
+          </view>
+        </view>
+        <view class="checkin-info" wx:if="{{continuousDays > 0}}">
+          连续打卡 {{continuousDays}} 天
+        </view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="leave-form">
+        <view class="form-item">
+          <text class="label">开始日期：</text>
+          <picker mode="date" value="{{leaveStartDate}}" start="{{today}}" bindchange="onStartDateChange">
+            <view class="picker">{{leaveStartDate}}</view>
+          </picker>
+        </view>
+        <view class="form-item">
+          <text class="label">结束日期：</text>
+          <picker mode="date" value="{{leaveEndDate}}" start="{{leaveStartDate}}" bindchange="onEndDateChange">
+            <view class="picker">{{leaveEndDate}}</view>
+          </picker>
+        </view>
+        <view class="form-item">
+          <text class="label">请假原因：</text>
+          <textarea placeholder="请输入请假原因" bindinput="onLeaveReasonInput" value="{{leaveReason}}" class="reason-input"></textarea>
+        </view>
+      </view>
+    </block>
+  </view>
+  <view class="buttons">
+    <view class="btn btn-secondary" bindtap="closeCheckinPopup">取消</view>
+    <view class="btn btn-primary" bindtap="confirmCheckin">{{isLeave ? '提交' : '确认'}}</view>
+  </view>
+</view>
